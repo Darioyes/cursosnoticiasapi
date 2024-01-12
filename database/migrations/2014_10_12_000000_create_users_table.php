@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('lastname',100);
             $table->string('email',155)->unique();
             $table->string('password');
-            $table->enum('admin_news',[true,false])->default(false);
-            $table->enum('send_mail',[true,false])->default(false);
+            $table->enum('admin_news',["true","false"])->default("false");
+            $table->enum('send_mail',["true","false"])->default("false");
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
