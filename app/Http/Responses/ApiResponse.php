@@ -11,7 +11,7 @@ class ApiResponse
         return response()->json([
             'response' => 'success',
             'message' => $message,
-            'token' => $token,
+            'noti_token' => $token,
             'data' => $data,
             'error' => false
         ], $code);

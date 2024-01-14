@@ -22,11 +22,13 @@ class Create extends FormRequest
      */
     public function rules(): array
     {
+        $passwordRule = Rules\Password::defaults()->mixedCase()->numbers()->min(8)->required();
+        $numbers = Rules\Password::defaults()->numbers();
         return [
             'name' => 'required|min:3|max:100',
             'lastname' => 'required|min:3|max:100',
-            'email' => ['required|email|min:5|max:155|unique:users'],
-            'password' => ['required|confirmed|max:150|',Rules\Password::defaults()->mixedCase()->numbers()->min(8)],//password_confirmation
+            'email' => 'required|email|unique:users',
+            'password' => ['confirmed',$passwordRule,$numbers],//password_confirmation
             'send_mail' => 'required|in:true,false',
             //terminos y condiciones siempre devolvera true
             'terms' => 'required|accepted',

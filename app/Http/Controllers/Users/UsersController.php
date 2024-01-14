@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -69,7 +69,7 @@ class UsersController extends Controller
     public function login(Login $request){
 
         //verificamos el guard que sea admin
-        $guard = $request->has('users') ? 'admin' : 'user';
+        $guard = $request->is_admin('admin') ? 'admin' : 'user';
         //buscamos en la base de deatos con attempt que el email y el password sean correctos
         if(!Auth::guard($guard)->attempt($request->only('email','password'))){
             //si no lo son devolvemos un error
@@ -80,10 +80,10 @@ class UsersController extends Controller
         return ApiResponse::successAuth('Sesión iniciada correctamente', Response::HTTP_OK, $token, $user);
     }
 
-    public function logout(){
-        //eliminamos el token de la base de datos desde la autenticacion de sanctum
-        auth()->user()->tokens()->delete();
+    // public function logout(){
+    //     //eliminamos el token de la base de datos desde la autenticacion de sanctum
+    //     auth()->user()->tokens()->delete();
         
-        return ApiResponse::success('Sesión cerrada correctamente', Response::HTTP_OK);
-    }
+    //     return ApiResponse::success('Sesión cerrada correctamente', Response::HTTP_OK);
+    // }
 }
