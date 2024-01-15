@@ -7,11 +7,15 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 
 use App\Models\Admin\User;
 use App\Http\Requests\Auth\Create;
 use App\Http\Requests\Auth\Login;
+use App\Http\Requests\Auth\Update;
 use App\Http\Responses\ApiResponse;
+
 
 class UsersController extends Controller
 {
@@ -20,7 +24,17 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+        try{
+            //traemos paginado los usuarios
+            $users = User::paginate(10);
+            
+            //verificamos el guard que sea admin
+            return ApiResponse::success('Lista de usuarios', Response::HTTP_OK, $users);
+
+        }catch(\Exception $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     /**
@@ -32,11 +46,11 @@ class UsersController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
 
-        $token = $user->createToken('noti_token')->plainTextToken;
+        //$token = $user->createToken('noti_token')->plainTextToken;
 
        //si el save fue exitoso
         if($user){
-            return ApiResponse::successAuth('Usuario creado correctamente', Response::HTTP_CREATED, $token, $user);
+            return ApiResponse::successAuth('Usuario creado correctamente', Response::HTTP_CREATED);
         }else{
             return ApiResponse::error('Error al crear el usuario', Response::HTTP_BAD_REQUEST);
         }
@@ -45,39 +59,89 @@ class UsersController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show($id)
     {
-        //
+        try{
+            $user = User::findOrFail($id);
+            return ApiResponse::success('Detalle de usuario', Response::HTTP_OK, $user);
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error('El usuario que busca no existe', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        //
+        try{
+
+            $request->validate([
+                'name' => 'required|min:3|max:100',
+                'lastname' => 'required|min:3|max:100',
+                'email' => 'required|email|unique:users,email,'.$id,
+                'admin_news' => 'required|in:true,false',
+            ]);
+
+            $user = User::findOrFail($id);
+            $user->fill($request->input());
+            $user->save();
+
+            //$user->update($request->input());
+
+            return ApiResponse::success('Usuario actualizado correctamente', Response::HTTP_OK, $user);
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error('El usuario que desea modificar no existe', Response::HTTP_NOT_FOUND);
+        }catch(\Exception $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        //
+        try{
+            //eliminamos el usuario
+            $user = User::findOrFail($id);
+            $name = $user->name;
+            $user->delete();
+            
+            return ApiResponse::success('Usuario '.$name.' fue eliminado correctamente', Response::HTTP_OK);
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error('El usuario que desea eliminar no existe', Response::HTTP_NOT_FOUND);
+        }
     }
 
     public function login(Login $request){
 
-        //verificamos el guard que sea admin
-        $guard = $request->has('users') ? 'admin' : 'user';
-        //buscamos en la base de deatos con attempt que el email y el password sean correctos
-        if(!Auth::guard($guard)->attempt($request->only('email','password'))){
-            //si no lo son devolvemos un error
-            return ApiResponse::error('Usuario y/o contraseña incorrectas', Response::HTTP_UNAUTHORIZED);
+        try{
+            //verificamos el guard que sea admin
+            $guard = $request->has('users') ? 'admin' : 'user';
+            //buscamos en la base de deatos con attempt que el email y el password sean correctos
+            if(!Auth::guard($guard)->attempt($request->only('email','password'))){
+                //si no lo son devolvemos un error
+                return ApiResponse::error('Usuario y/o contraseña incorrectas', Response::HTTP_UNAUTHORIZED);
+            }
+            
+            $user = User::where('email', $request->email)->first();
+            //$user = Auth::guard($guard)->user();
+            
+    
+            if ( $user->admin_news === 'false') {
+                // Si 'admin_news' no es true, el usuario no tiene permisos de administrador
+                Auth::guard($guard)->logout();
+                return ApiResponse::error('No tiene acceso a esta aplicación', Response::HTTP_UNAUTHORIZED);
+            }
+    
+            $token = $user->createToken('noti_token')->plainTextToken;
+            return ApiResponse::successAuth('Login exitoso', Response::HTTP_OK, $token, $user);
+
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-        $user = User::where('email', $request->email)->first();
-        $token = $user->createToken('noti_token')->plainTextToken;
-        return ApiResponse::successAuth('Sesión iniciada correctamente', Response::HTTP_OK, $token, $user);
+
     }
 
     public function logout(){
