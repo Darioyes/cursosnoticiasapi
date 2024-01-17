@@ -12,6 +12,7 @@ class News extends Model
     protected $fillable = [
         'epigraph',
         'title',
+        'slug',
         'image',
         'content',
         'featured',

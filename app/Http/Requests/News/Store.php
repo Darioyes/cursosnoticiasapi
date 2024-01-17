@@ -23,7 +23,7 @@ class Store extends FormRequest
     {
         return [
             'epigraph' => 'required|string|nullable|min:10|max:500',
-            'title' => 'required|string|min:10|max:255',
+            'title' => 'required|string|min:10|max:255|unique:news',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'content' => 'required|in:news,course',
             'featured' => 'required|numeric|in:1,0',

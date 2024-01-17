@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 use App\Models\Admin\News;
 use App\Http\Responses\ApiResponse;
@@ -42,6 +43,13 @@ class NewsController extends Controller
             $path = $request->image->store('public/images/news'); //sube los archivos en store/app/public/images/news
             //guardamos la ruta en la base de datos
             $news->image = $path;
+            //obtenemos el titulo para realizar el slug con guiones
+            $title = $request->title;
+            //creamos el slug
+            $slug = str_replace(' ', '-', $title);
+            //guardamos el slug en la base de datos
+            $news->slug = $slug;
+            //guardamos la noticia
             $news->save();
             //retornamos mensaje de exito
             return ApiResponse::success('Noticia creada correctamente', Response::HTTP_CREATED);
@@ -71,9 +79,55 @@ class NewsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, News $news)
+    public function update(Request $request, $id)
     {
-        //
+        try{
+            //validamos los datos
+            $rules = [
+                'epigraph' => 'required|string|nullable|min:10|max:500',
+                'title' => 'required|string|min:10|max:255|unique:news,title,'.$id,
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'content' => 'required|in:news,course',
+                'featured' => 'required|numeric|in:1,0',
+                'visible' => 'required|numeric|in:1,0',
+                'category_news_id' => 'nullable|numeric|exists:categories_news,id',
+                'category_course_id' => 'nullable|numeric|exists:categories_courses,id',
+            ];
+            $validator = Validator::make($request->all(), $rules);
+            if($validator->fails()){
+                return ApiResponse::error('Error en la validación', Response::HTTP_BAD_REQUEST, $validator->errors()->all());
+            }
+
+            //buscamos la noticia por id
+            $news = News::findOrFail($id);
+            //si el usuario sube una imagen
+            if($request->hasFile('image')){
+                //guardamos la ruta de la imagen en la variable $path
+                $path = $request->image->store('public/images/news');
+                //eliminamos la imagen anterior
+                Storage::delete($news->image);
+                //guardamos la ruta de la nueva imagen
+                $news->image = $path;
+            }
+            //obtenemos el titulo para realizar el slug con guiones
+            $title = $request->title;
+            //creamos el slug
+            $slug = str_replace(' ', '-', $title);
+            //guardamos el slug en la base de datos
+            $news->slug = $slug;
+            //actualizamos los datos
+            $news->update($request->input());
+            //retornamos mensaje de exito
+            return ApiResponse::success('Noticia actualizada correctamente', Response::HTTP_OK, $news);
+        }
+        catch(ModelNotFoundException $e){
+            //si no existe el id de la noticia retornamos un mensaje de error
+            return ApiResponse::error('La noticia que desea modificar no existe', Response::HTTP_NOT_FOUND);
+        }
+        catch(\Exception $e){
+            //si ocurre un error retornamos un mensaje de error
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

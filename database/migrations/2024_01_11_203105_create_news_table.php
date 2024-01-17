@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('news', function (Blueprint $table) {
             $table->id();
             $table->string('epigraph',500)->nullable();
-            $table->string('title',255);
-            $table->string('image',100);
+            $table->string('title',255)->unique();
+            $table->string('slug',255)->unique();
+            $table->string('image',100)->nullable();
             $table->enum('content',['news','course']);
             //columna que indica con true o false si el articulo es destacado
             $table->boolean('featured')->default(false);

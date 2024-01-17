@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Validator;
 
 
 use App\Models\Admin\User as UserAdmin;
@@ -74,13 +75,17 @@ class UsersController extends Controller
     public function update(Request $request, $id)
     {
         try{
-
-            $request->validate([
+            $rules = [
                 'name' => 'required|min:3|max:100',
                 'lastname' => 'required|min:3|max:100',
                 'email' => 'required|email|unique:users,email,'.$id,
                 'admin_news' => 'required|in:true,false',
-            ]);
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+            if($validator->fails()){
+                return ApiResponse::error('Error en la validación', Response::HTTP_BAD_REQUEST, $validator->errors()->all());
+            }
 
             $user = UserAdmin::findOrFail($id);
             $user->fill($request->input());
