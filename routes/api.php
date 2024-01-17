@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\CategoriesNewsController;
 
 
 /*
@@ -27,4 +28,6 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('users/logout', [UsersController::class, 'logout']);
     //ruta de tipo recurso para news
     Route::resource('news',NewsController::class )->except(['create','edit']);
+    //ruta de tipo recurso para categories_news
+    Route::resource('categories_news',CategoriesNewsController::class )->except(['create','edit']);
 });

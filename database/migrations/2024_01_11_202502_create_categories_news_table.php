@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('categories_news', function (Blueprint $table) {
             $table->id();
             $table->string('name',100);
-            $table->string('path',200);
+            $table->string('slug',200);
             $table->timestamps();
         });
     }
