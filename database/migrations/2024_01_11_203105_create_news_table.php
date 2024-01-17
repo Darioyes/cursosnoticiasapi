@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('epigraph',500)->nullable();
             $table->string('title',255);
-            $table->string('image',100)->nullable();
+            $table->string('image',100);
             $table->enum('content',['news','course']);
             //columna que indica con true o false si el articulo es destacado
             $table->boolean('featured')->default(false);
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->boolean('visible')->default(true);
             $table->timestamps();
             //relacion con la tabla categories_news
-            $table->foreignId('category_news_id')->constrained('categories_news')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('category_news_id')->nullable()->constrained('categories_news')->onDelete('cascade')->onUpdate('cascade');
             //relacion de la tabla news con la tabla categories_courses
             $table->foreignId('category_course_id')->nullable()->constrained('categories_courses')->onDelete('cascade')->onUpdate('cascade');
 

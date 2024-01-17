@@ -1,9 +1,11 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\Admin\NewsController;
+
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,9 +21,10 @@ use App\Http\Controllers\Admin\UsersController;
 Route::post('users/login', [UsersController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function(){
-    Route::resource('users',UsersController::class )->except(['create','edit']);
     //ruta de tipo recurso para users
-    //ruta de logout
+    Route::resource('users',UsersController::class )->except(['create','edit']);
+    //ruta de logout de users
     Route::post('users/logout', [UsersController::class, 'logout']);
-    
+    //ruta de tipo recurso para news
+    Route::resource('news',NewsController::class )->except(['create','edit']);
 });

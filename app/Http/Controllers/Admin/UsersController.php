@@ -10,10 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 
-use App\Models\Admin\User;
+use App\Models\Admin\User as UserAdmin;
 use App\Http\Requests\Auth\Create;
 use App\Http\Requests\Auth\Login;
-use App\Http\Requests\Auth\Update;
 use App\Http\Responses\ApiResponse;
 
 
@@ -26,7 +25,7 @@ class UsersController extends Controller
     {
         try{
             //traemos paginado los usuarios
-            $users = User::paginate(10);
+            $users = UserAdmin::paginate(10);
             
             //verificamos el guard que sea admin
             return ApiResponse::success('Lista de usuarios', Response::HTTP_OK, $users);
@@ -42,7 +41,7 @@ class UsersController extends Controller
      */
     public function store(Create $request)
     {
-        $user = new User($request->input());
+        $user = new UserAdmin($request->input());
         $user->password = Hash::make($request->password);
         $user->save();
 
@@ -62,7 +61,7 @@ class UsersController extends Controller
     public function show($id)
     {
         try{
-            $user = User::findOrFail($id);
+            $user = UserAdmin::findOrFail($id);
             return ApiResponse::success('Detalle de usuario', Response::HTTP_OK, $user);
         }catch(ModelNotFoundException $e){
             return ApiResponse::error('El usuario que busca no existe', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -83,7 +82,7 @@ class UsersController extends Controller
                 'admin_news' => 'required|in:true,false',
             ]);
 
-            $user = User::findOrFail($id);
+            $user = UserAdmin::findOrFail($id);
             $user->fill($request->input());
             $user->save();
 
@@ -104,7 +103,7 @@ class UsersController extends Controller
     {
         try{
             //eliminamos el usuario
-            $user = User::findOrFail($id);
+            $user = UserAdmin::findOrFail($id);
             $name = $user->name;
             $user->delete();
             
@@ -125,7 +124,7 @@ class UsersController extends Controller
                 return ApiResponse::error('Usuario y/o contraseña incorrectas', Response::HTTP_UNAUTHORIZED);
             }
             
-            $user = User::where('email', $request->email)->first();
+            $user = UserAdmin::where('email', $request->email)->first();
             //$user = Auth::guard($guard)->user();
             
     
