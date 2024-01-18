@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Articles\Store;
 use App\Models\Admin\Articles;
-use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +21,7 @@ class ArticlesController extends Controller
     {
         try{
             //relacionamos las tablas para traer el news_id y el article_image_id
-            $articles = Articles::paginate(10);
+            $articles = Articles::orderBy('id', 'desc')->paginate(10);
             //retornamos la respuesta
             return ApiResponse::success('Listado de articulos', Response::HTTP_OK, $articles);
         }catch(\Exception $e){

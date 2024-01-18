@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\CategoriesNewsController;
 use App\Http\Controllers\Admin\CategoriesCoursesController;
 use App\Http\Controllers\Admin\ArticlesController;
+use App\Http\Controllers\Admin\CommentsController;
 
 
 /*
@@ -36,4 +37,6 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::resource('categories_courses',CategoriesCoursesController::class )->except(['create','edit']);
     //ruta de tipo recurso para articles
     Route::resource('articles',ArticlesController::class )->except(['create','edit']);
+    //ruta de tipo recurso de comments
+    Route::resource('comments',CommentsController::class )->except(['create','edit']);
 });

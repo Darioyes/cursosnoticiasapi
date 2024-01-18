@@ -21,7 +21,7 @@ class CategoriesNewsController extends Controller
     {
         try{
             //Traemos todas las categorias paginado en 10
-            $categories_news = Categories_news::paginate(10);
+            $categories_news = Categories_news::orderBy('name', 'asc')->paginate(10);
             //retornamos la respuesta
             return ApiResponse::success('Listado de categorias', Response::HTTP_OK, $categories_news);
         }catch(\Exception $e){

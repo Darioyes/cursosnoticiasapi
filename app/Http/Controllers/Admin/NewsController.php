@@ -22,7 +22,9 @@ class NewsController extends Controller
     {
         try{
             //traemos paginadas las noticias
-            $news = News::with(['articles','category_news', 'category_course'])->paginate(10);
+            $news = News::with(['articles','category_news', 'category_course', 'comments'])
+            ->orderBy('id', 'desc')
+            ->paginate(10);
             //retornamos la respuesta
             return ApiResponse::success('Listado de noticias', Response::HTTP_OK, $news);
 

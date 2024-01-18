@@ -43,6 +43,13 @@ class UsersController extends Controller
     public function store(Create $request)
     {
         $user = new UserAdmin($request->input());
+        //lo que llega en la varieble name lo convertimos a minusculas
+        $user->name = strtolower($request->name);
+        $user->lastname = strtolower($request->lastname);
+        //dejamos la primera letra en mayusculas de las plabras
+        $user->name = ucwords($request->name);
+        $user->lastname = ucwords($request->lastname);
+        //hasheamos la contraseña
         $user->password = Hash::make($request->password);
         $user->save();
 
