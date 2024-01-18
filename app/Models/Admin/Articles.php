@@ -13,6 +13,7 @@ class Articles extends Model
         'subtitle',
         'entrance',
         'body_news',
+        'image',
         'news_id',
         'article_image_id'
     ];
