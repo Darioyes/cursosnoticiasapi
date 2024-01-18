@@ -11,7 +11,7 @@ class Categories_courses extends Model
 
     protected $fillable = [
         'name',
-        'path',
+        'slug',
     ];
 
     //relacion de uno a muchos con la tabla news

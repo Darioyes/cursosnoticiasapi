@@ -7,9 +7,9 @@ use App\Models\Admin\Categories_news;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 use App\Http\Responses\ApiResponse;
-use Symfony\Component\HttpFoundation\Response;
 use App\Http\Requests\CategoriesNews\Store;
 
 class CategoriesNewsController extends Controller
@@ -98,6 +98,8 @@ class CategoriesNewsController extends Controller
             return ApiResponse::success('Categoria actualizada correctamente', Response::HTTP_OK);
         }catch(ModelNotFoundException $e){
             return ApiResponse::error('Error al actualizar la categoria', Response::HTTP_BAD_REQUEST);
+        }catch(\Exception $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -109,10 +111,12 @@ class CategoriesNewsController extends Controller
         try{
             //buscamos la categoria
             $categories_news = Categories_news::findOrFail($id);
+            //obtenemos el nombre de la categoria
+            $name = $categories_news->name;
             //eliminamos la categoria
             $categories_news->delete();
             //retornamos mensaje de exito
-            return ApiResponse::success('Categoria eliminada correctamente', Response::HTTP_OK);
+            return ApiResponse::success('Categoria '.$name.' eliminada correctamente', Response::HTTP_OK);
         }catch(ModelNotFoundException $e){
             return ApiResponse::error('Error al eliminar la categoria', Response::HTTP_BAD_REQUEST);
         }

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\Admin\CategoriesNewsController;
+use App\Http\Controllers\Admin\CategoriesCoursesController;
 
 
 /*
@@ -30,4 +31,6 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::resource('news',NewsController::class )->except(['create','edit']);
     //ruta de tipo recurso para categories_news
     Route::resource('categories_news',CategoriesNewsController::class )->except(['create','edit']);
+    //ruta de tipo recurso para categories_courses
+    Route::resource('categories_courses',CategoriesCoursesController::class )->except(['create','edit']);
 });
