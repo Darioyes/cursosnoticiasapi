@@ -22,7 +22,7 @@ class NewsController extends Controller
     {
         try{
             //traemos paginadas las noticias
-            $news = News::paginate(10);
+            $news = News::with(['category_news', 'category_course'])->paginate(10);
             //retornamos la respuesta
             return ApiResponse::success('Listado de noticias', Response::HTTP_OK, $news);
 
@@ -66,10 +66,19 @@ class NewsController extends Controller
     public function show($id)
     {
         try{
-            //buscamos la noticia por id
-            $news = News::findOrFail($id);
+            //si es noticia o curso hacemos la relación con eloquent
+            //!estamos creando un objeto de la clase News y llamando a la función with
+            //!dentro de la función with le pasamos un array con las relaciones que queremos hacer
+            //!en este caso category_news y category_course que son las funciones que tenemos en el modelo News
+            $news = News::with(['category_news', 'category_course'])
+                        ->findOrFail($id)
+                        ->makeHidden(['category_news_id', 'category_course_id']);
             //retornamos la respuesta
             return ApiResponse::success('Detalle de noticia', Response::HTTP_OK, $news);
+            //buscamos la noticia por id
+            // $news = News::findOrFail($id);
+            // //retornamos la respuesta
+            // return ApiResponse::success('Detalle de noticia', Response::HTTP_OK, $news);
         }catch(ModelNotFoundException $e){
             //si no existe el id de la noticia retornamos un mensaje de error
             return ApiResponse::error('La noticia que busca no existe', Response::HTTP_INTERNAL_SERVER_ERROR);
