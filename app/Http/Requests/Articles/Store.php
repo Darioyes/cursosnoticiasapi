@@ -25,8 +25,8 @@ class Store extends FormRequest
             'subtitle' => 'required|string|min:5|max:255',
             'entrance' => 'required|string|min:5|max:1000',
             'body_news' => 'required|string|min:5|max:10000',
-            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'news_id' => 'required|numeric|exists:news,id',
+            'image' => 'image|mimes:jpg,jpeg,png|max:2048',
+            'news_id' => 'required|exists:news,id',
             'article_image_id' => 'nullable|numeric|exists:article_images,id'
         ];
     }

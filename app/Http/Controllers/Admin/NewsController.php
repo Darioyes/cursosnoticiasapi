@@ -24,7 +24,7 @@ class NewsController extends Controller
             //traemos paginadas las noticias
             $news = News::with(['articles','category_news', 'category_course', 'comments'])
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->paginate(5);
             //retornamos la respuesta
             return ApiResponse::success('Listado de noticias', Response::HTTP_OK, $news);
 
@@ -72,7 +72,7 @@ class NewsController extends Controller
             //!estamos creando un objeto de la clase News y llamando a la función with
             //!dentro de la función with le pasamos un array con las relaciones que queremos hacer
             //!en este caso category_news y category_course que son las funciones que tenemos en el modelo News
-            $news = News::with(['category_news', 'category_course'])
+            $news = News::with(['articles','category_news', 'category_course','comments'])
                         ->findOrFail($id)
                         ->makeHidden(['category_news_id', 'category_course_id']);
             //retornamos la respuesta

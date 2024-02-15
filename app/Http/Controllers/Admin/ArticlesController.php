@@ -78,7 +78,7 @@ class ArticlesController extends Controller
             //buscamos el articulo
             $articles = Articles::findOrFail($id);
             //si existe la imagen
-            if($request->hasFile('image')){
+            if( $request->hasFile('image') && $request->file('image')->isValid()){
                 //subimos la imagen y guardamos la ruta en la variable $path
                 $path = $request->image->store('public/images/articles'); //sube los archivos en store/app/public/images/articles
                 //eliminamos la imagen anterior
@@ -111,8 +111,18 @@ class ArticlesController extends Controller
             $articles->delete();
             //si el articulo se elimino correctamente eliminamos la imagen
             if($articles){
+                //si existe la imagen la borramos si no existe no hacemos nada
+                if($path){
+                    try{
+                        //buscamos la imagen para eliminarla
+                        Storage::delete($path);
+                    }catch(\Exception $e
+                    ){
+                        return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+                    }
+                }
                 //buscamos la imagen para eliminarla
-                Storage::delete($path);
+                //Storage::delete($path);
                 return ApiResponse::success('Articulo eliminado correctamente', Response::HTTP_OK);
             }else{
                 return ApiResponse::error('Error al eliminar el articulo', Response::HTTP_INTERNAL_SERVER_ERROR);
