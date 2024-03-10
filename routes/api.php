@@ -37,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::resource('categories_courses',CategoriesCoursesController::class )->except(['create','edit']);
     //ruta de tipo recurso para articles
     Route::resource('articles',ArticlesController::class )->except(['create','edit']);
+    //ruta de articles para modificar
+    Route::post('articles2/{id}', [ArticlesController::class, 'update']);
     //ruta de tipo recurso de comments
     Route::resource('comments',CommentsController::class )->except(['create','edit']);
 });
