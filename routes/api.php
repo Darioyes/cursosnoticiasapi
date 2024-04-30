@@ -31,6 +31,8 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('users/logout', [UsersController::class, 'logout']);
     //ruta de tipo recurso para news
     Route::resource('news',NewsController::class )->except(['create','edit']);
+     //ruta de articles para modificar
+     Route::post('news2/{id}', [NewsController::class, 'update']);
     //ruta de tipo recurso para categories_news
     Route::resource('categories_news',CategoriesNewsController::class )->except(['create','edit']);
     //ruta de tipo recurso para categories_courses

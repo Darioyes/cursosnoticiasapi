@@ -24,7 +24,7 @@ class NewsController extends Controller
             //traemos paginadas las noticias
             $news = News::with(['articles','category_news', 'category_course', 'comments'])
             ->orderBy('id', 'desc')
-            ->paginate(5);
+            ->paginate(10);
             //retornamos la respuesta
             return ApiResponse::success('Listado de noticias', Response::HTTP_OK, $news);
 
@@ -59,7 +59,7 @@ class NewsController extends Controller
         }catch(ModelNotFoundException $e){
             return ApiResponse::error('Error al crear la noticia', Response::HTTP_BAD_REQUEST);
         }
-        
+
     }
 
     /**
