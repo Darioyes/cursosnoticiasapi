@@ -27,7 +27,7 @@ class UsersController extends Controller
         try{
             //traemos paginado los usuarios
             $users = UserAdmin::paginate(10);
-            
+
             //verificamos el guard que sea admin
             return ApiResponse::success('Lista de usuarios', Response::HTTP_OK, $users);
 
@@ -83,9 +83,9 @@ class UsersController extends Controller
     {
         try{
             $rules = [
-                'name' => 'required|min:3|max:100',
-                'lastname' => 'required|min:3|max:100',
-                'email' => 'required|email|unique:users,email,'.$id,
+                // 'name' => 'required|min:3|max:100',
+                // 'lastname' => 'required|min:3|max:100',
+                // 'email' => 'required|email|unique:users,email,'.$id,
                 'admin_news' => 'required|in:true,false',
             ];
 
@@ -118,7 +118,7 @@ class UsersController extends Controller
             $user = UserAdmin::findOrFail($id);
             $name = $user->name;
             $user->delete();
-            
+
             return ApiResponse::success('Usuario '.$name.' fue eliminado correctamente', Response::HTTP_OK);
         }catch(ModelNotFoundException $e){
             return ApiResponse::error('El usuario que desea eliminar no existe', Response::HTTP_NOT_FOUND);
@@ -135,17 +135,17 @@ class UsersController extends Controller
                 //si no lo son devolvemos un error
                 return ApiResponse::error('Usuario y/o contraseña incorrectas', Response::HTTP_UNAUTHORIZED);
             }
-            
+
             $user = UserAdmin::where('email', $request->email)->first();
             //$user = Auth::guard($guard)->user();
-            
-    
+
+
             if ( $user->admin_news === 'false') {
                 // Si 'admin_news' no es true, el usuario no tiene permisos de administrador
                 Auth::guard($guard)->logout();
                 return ApiResponse::error('No tiene acceso a esta aplicación', Response::HTTP_UNAUTHORIZED);
             }
-    
+
             $token = $user->createToken('noti_token')->plainTextToken;
             return ApiResponse::successAuth('Login exitoso', Response::HTTP_OK, $token, $user);
 
@@ -158,7 +158,7 @@ class UsersController extends Controller
     public function logout(){
         //eliminamos el token de la base de datos desde la autenticacion de sanctum
         auth()->user()->tokens()->delete();
-        
+
         return ApiResponse::success('Sesión cerrada correctamente', Response::HTTP_OK);
     }
 }
