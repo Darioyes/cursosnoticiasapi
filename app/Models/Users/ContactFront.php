@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Models\Admin;
+namespace App\Models\Users;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Contact extends Model
+class ContactFront extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'name',
         'email',

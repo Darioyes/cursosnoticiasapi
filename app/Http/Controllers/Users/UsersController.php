@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 
-use App\Models\Admin\User;
+use App\Models\Users\User;
 use App\Http\Requests\Auth\Create;
 use App\Http\Requests\Auth\Login;
 use App\Http\Responses\ApiResponse;
@@ -83,7 +83,7 @@ class UsersController extends Controller
     // public function logout(){
     //     //eliminamos el token de la base de datos desde la autenticacion de sanctum
     //     auth()->user()->tokens()->delete();
-        
+
     //     return ApiResponse::success('Sesión cerrada correctamente', Response::HTTP_OK);
     // }
 }
