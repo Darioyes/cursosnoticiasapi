@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\CategoriesNewsController;
 use App\Http\Controllers\Admin\CategoriesCoursesController;
 use App\Http\Controllers\Admin\ArticlesController;
 use App\Http\Controllers\Admin\CommentsController;
+//frontend
+use App\Http\Controllers\Users\NewsController as NewsFrontController;
 
 
 /*
@@ -21,7 +23,7 @@ use App\Http\Controllers\Admin\CommentsController;
 |
 */
 
-//ruta de login
+//ruta de login backend
 Route::post('users/login', [UsersController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function(){
@@ -44,3 +46,7 @@ Route::middleware('auth:sanctum')->group(function(){
     //ruta de tipo recurso de comments
     Route::resource('comments',CommentsController::class )->except(['create','edit']);
 });
+
+//rutas frontend
+//el metodo only nos permite definir que rutas queremos que se creen
+Route::resource('noticias', NewsFrontController::class)->only(['index', 'show']);

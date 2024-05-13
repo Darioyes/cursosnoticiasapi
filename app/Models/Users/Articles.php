@@ -5,7 +5,7 @@ namespace App\Models\Users;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ArticlesFront extends Model
+class Articles extends Model
 {
     use HasFactory;
 
@@ -19,7 +19,7 @@ class ArticlesFront extends Model
     ];
      //relacion de muchos a uno con la tabla news
      public function news(){
-        return $this->belongsTo(NewsFront::class);
+        return $this->belongsTo(News::class);
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Models\Users\CategoriesNewsFront;
+use App\Models\Users\CategoriesNews as CategoriesNewsFront;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 

@@ -5,7 +5,7 @@ namespace App\Models\Users;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CommentsFront extends Model
+class Comments extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -15,6 +15,6 @@ class CommentsFront extends Model
 
     //relacion de muchos a uno con la tabla news
     public function news(){
-        return $this->belongsTo(NewsFront::class);
+        return $this->belongsTo(News::class);
     }
 }

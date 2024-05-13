@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Models\Users\ContactFront;
+use App\Models\Users\Contact as ContactFront;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Models\Users\CommentsFront;
+use App\Models\Users\Comments as CommentsFront;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 

@@ -5,7 +5,7 @@ namespace App\Models\Users;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CategoriesCoursesFront extends Model
+class Categories_courses extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -15,7 +15,7 @@ class CategoriesCoursesFront extends Model
 
     //relacion de uno a muchos con la tabla news
     public function courses(){
-        return $this->hasMany(NewsFront::class);
+        return $this->hasMany(News::class);
     }
 
 }

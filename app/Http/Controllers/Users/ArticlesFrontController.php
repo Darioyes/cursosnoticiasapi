@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Models\Users\ArticlesFront;
+use App\Models\Users\Articles as ArticlesFront;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 

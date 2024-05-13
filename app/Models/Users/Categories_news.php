@@ -5,7 +5,7 @@ namespace App\Models\Users;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CategoriesNewsFront extends Model
+class Categories_news extends Model
 {
     use HasFactory;
     protected $fillable = [
@@ -15,6 +15,6 @@ class CategoriesNewsFront extends Model
 
     //relacion de uno a muchos con la tabla news
     public function news(){
-        return $this->hasMany(NewsFront::class);
+        return $this->hasMany(News::class);
     }
 }
