@@ -10,6 +10,9 @@ use App\Http\Controllers\Admin\ArticlesController;
 use App\Http\Controllers\Admin\CommentsController;
 //frontend
 use App\Http\Controllers\Users\NewsController as NewsFrontController;
+use App\Http\Controllers\Users\UsersController as UsersFrontController;
+use App\Http\Controllers\Users\CommentsController as CommentsFrontController;
+use App\Http\Controllers\Users\ContactController as ContactFrontController;
 
 
 /*
@@ -23,7 +26,9 @@ use App\Http\Controllers\Users\NewsController as NewsFrontController;
 |
 */
 
-//ruta de login backend
+
+//!rutas backend
+//ruta de login
 Route::post('users/login', [UsersController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function(){
@@ -47,6 +52,29 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::resource('comments',CommentsController::class )->except(['create','edit']);
 });
 
-//rutas frontend
+//!rutas frontend
 //el metodo only nos permite definir que rutas queremos que se creen
 Route::resource('noticias', NewsFrontController::class)->only(['index', 'show']);
+
+
+//ruta comentarios
+Route::resource('noticias/comentarios', CommentsFrontController::class)->only(['store']);
+
+//ruta contacto
+Route::resource('noticias/contactame', ContactFrontController::class)->only(['store']);
+
+//ruta de login
+Route::post('noticias/login', [UsersFrontController::class, 'login']);
+
+//ruta de registro
+Route::post('noticias/registro', [UsersFrontController::class, 'store']);
+
+//grupo de rutas de autenticación
+Route::middleware('auth:sanctum')->group(function(){
+    //ruta de logout
+    Route::post('noticias/logout', [UsersFrontController::class, 'logout']);
+
+    //ruta usuarios
+    Route::resource('noticias/usuario', UsersFrontController::class)->only(['show', 'update']);
+});
+

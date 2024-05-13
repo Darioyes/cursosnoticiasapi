@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Models\Users\Comments as CommentsFront;
+
+use App\Models\Users\Categories_news as CategoriesNewsFront;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class CommentsFrontController extends Controller
+
+class CategoriesNewsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +29,7 @@ class CommentsFrontController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(CommentsFront $commentsFront)
+    public function show(CategoriesNewsFront $categoriesNewsFront)
     {
         //
     }
@@ -35,7 +37,7 @@ class CommentsFrontController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CommentsFront $commentsFront)
+    public function update(Request $request, CategoriesNewsFront $categoriesNewsFront)
     {
         //
     }
@@ -43,7 +45,7 @@ class CommentsFrontController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CommentsFront $commentsFront)
+    public function destroy(CategoriesNewsFront $categoriesNewsFront)
     {
         //
     }

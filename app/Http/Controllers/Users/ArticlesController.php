@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Models\Users\Contact as ContactFront;
+use App\Models\Users\Articles as ArticlesFront;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class ContactFrontController extends Controller
+class ArticlesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class ContactFrontController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ContactFront $contactFront)
+    public function show(ArticlesFront $articlesFront)
     {
         //
     }
@@ -35,7 +35,7 @@ class ContactFrontController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ContactFront $contactFront)
+    public function update(Request $request, ArticlesFront $articlesFront)
     {
         //
     }
@@ -43,7 +43,7 @@ class ContactFrontController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ContactFront $contactFront)
+    public function destroy(ArticlesFront $articlesFront)
     {
         //
     }

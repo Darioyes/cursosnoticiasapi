@@ -73,10 +73,9 @@ class UsersController extends Controller
     {
         try{
             $rules = [
-                // 'name' => 'required|min:3|max:100',
-                // 'lastname' => 'required|min:3|max:100',
-                // 'email' => 'required|email|unique:users,email,'.$id,
-                'admin_news' => 'required|in:true,false',
+                'name' => 'required|min:3|max:100',
+                'lastname' => 'required|min:3|max:100',
+                'email' => 'required|email|unique:users,email,'.$id,
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -117,13 +116,12 @@ class UsersController extends Controller
 
     public function login(Login $request){
 
-        //verificamos el guard que sea admin
-        $guard = $request->is_admin('admin') ? 'admin' : 'user';
+
         //buscamos en la base de deatos con attempt que el email y el password sean correctos
-        if(!Auth::guard($guard)->attempt($request->only('email','password'))){
-            //si no lo son devolvemos un error
+        if(!Auth::attempt($request->only('email', 'password'))){
             return ApiResponse::error('Usuario y/o contraseña incorrectas', Response::HTTP_UNAUTHORIZED);
         }
+
         $user = UserFront::where('email', $request->email)->first();
         $token = $user->createToken('noti_token')->plainTextToken;
         return ApiResponse::successAuth('Sesión iniciada correctamente', Response::HTTP_OK, $token, $user);

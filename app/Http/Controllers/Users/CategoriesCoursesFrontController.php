@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Users;
 
-use App\Models\Users\CategoriesCourses as CategoriesCoursesFront;
+use App\Models\Users\Categories_courses as CategoriesCoursesFront;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
