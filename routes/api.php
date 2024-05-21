@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoriesNewsController;
 use App\Http\Controllers\Admin\CategoriesCoursesController;
 use App\Http\Controllers\Admin\ArticlesController;
 use App\Http\Controllers\Admin\CommentsController;
+use App\Http\Controllers\Admin\ContactController;
 //frontend
 use App\Http\Controllers\Users\NewsController as NewsFrontController;
 use App\Http\Controllers\Users\UsersController as UsersFrontController;
@@ -50,6 +51,10 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('articles2/{id}', [ArticlesController::class, 'update']);
     //ruta de tipo recurso de comments
     Route::resource('comments',CommentsController::class )->except(['create','edit']);
+    //ruta de tipo recurso de contact
+    Route::resource('contact',ContactController::class )->except(['create','edit']);
+    //ruta para descargar archivo
+    Route::get('contact/download/{file}', [ContactController::class, 'download']);
 });
 
 //!rutas frontend
@@ -68,9 +73,15 @@ Route::post('noticias/login', [UsersFrontController::class, 'login']);
 
 //ruta de registro
 Route::post('noticias/registro', [UsersFrontController::class, 'store']);
+//ruta de verificación de email
+Route::get('noticias/verificar/{id}/{hash}', [UsersFrontController::class, 'verify'])->name('verification.verify');
+
+//ruta para resetear password
+//Route::post('noticias/reset-password', [UsersFrontController::class, 'resetPassword']);
+
 
 //grupo de rutas de autenticación
-Route::middleware('auth:sanctum')->group(function(){
+Route::middleware(['auth:sanctum','verified'])->group(function(){
     //ruta de logout
     Route::post('noticias/logout', [UsersFrontController::class, 'logout']);
 

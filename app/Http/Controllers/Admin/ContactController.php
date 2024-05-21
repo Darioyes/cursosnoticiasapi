@@ -74,28 +74,28 @@ class ContactController extends Controller
      */
     public function update(Store $request, $id)
     {
-        try{
-            //traemos el comentario de contacto
-            $contact = Contact::findOrFail($id);
-            //actualizamos el comentario de contacto
-            $contact->update($request->input());
-            //si se adjunto un documento lo guardamos en una carpeta privada
-            if($request->file){
-                $path = $request->file->store('private/contact');
-                //eliminamos el archivo anterior
-                Storage::delete($contact->file);
-                //guardamos el nuevo archivo en la variable
-                $contact->file = $path;
-            }
-            //guardamos el comentario de contacto
-            $contact->save();
-            //retornamos mensaje de exito
-            return ApiResponse::success('Comentario actualizado correctamente', Response::HTTP_OK);
-        }catch(ModelNotFoundException $e){
-            return ApiResponse::error('Comentario no encontrado', Response::HTTP_NOT_FOUND);
-        }catch(\Exception $e){
-            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        // try{
+        //     //traemos el comentario de contacto
+        //     $contact = Contact::findOrFail($id);
+        //     //actualizamos el comentario de contacto
+        //     $contact->update($request->input());
+        //     //si se adjunto un documento lo guardamos en una carpeta privada
+        //     if($request->file){
+        //         $path = $request->file->store('private/contact');
+        //         //eliminamos el archivo anterior
+        //         Storage::delete($contact->file);
+        //         //guardamos el nuevo archivo en la variable
+        //         $contact->file = $path;
+        //     }
+        //     //guardamos el comentario de contacto
+        //     $contact->save();
+        //     //retornamos mensaje de exito
+        //     return ApiResponse::success('Comentario actualizado correctamente', Response::HTTP_OK);
+        // }catch(ModelNotFoundException $e){
+        //     return ApiResponse::error('Comentario no encontrado', Response::HTTP_NOT_FOUND);
+        // }catch(\Exception $e){
+        //     return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        // }
     }
 
     /**
@@ -119,9 +119,40 @@ class ContactController extends Controller
                 return ApiResponse::error('Error al eliminar el comentario', Response::HTTP_INTERNAL_SERVER_ERROR);
             }
         }catch(ModelNotFoundException $e){
-            return ApiResponse::error('Comentario no encontrado', Response::HTTP_NOT_FOUND);    
+            return ApiResponse::error('Comentario no encontrado', Response::HTTP_NOT_FOUND);
         }catch(\Exception $e){
             return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    //funcion para descargar el archivo de la carpeta privada
+ public function download($id)
+{
+    try {
+        // Traemos el comentario de contacto
+        $contact = Contact::findOrFail($id);
+
+        // Verificamos que el archivo no sea null
+        if (!$contact->file) {
+            return ApiResponse::error('Archivo no encontrado', Response::HTTP_NOT_FOUND);
+        }
+
+        // Ruta completa del archivo en el almacenamiento privado
+        $filePath =  $contact->file;
+
+        // Verificamos que el archivo exista
+        if (!Storage::disk('local')->exists($filePath)) {
+            return ApiResponse::error('Archivo no encontrado', Response::HTTP_NOT_FOUND);
+        }
+
+        // Retornamos el archivo
+        return Storage::disk('local')->download($filePath);
+    } catch (ModelNotFoundException $e) {
+        return ApiResponse::error('Comentario no encontrado', Response::HTTP_NOT_FOUND);
+    } catch (\Exception $e) {
+        return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+}
+
+
 }

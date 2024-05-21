@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+//use Illuminate\Auth\Events\Registered;
 
 use App\Models\Users\User as UserFront;
 use App\Http\Requests\Auth\Create;
@@ -32,25 +33,38 @@ class UsersController extends Controller
      */
     public function store(Create $request)
     {
-        $user = new UserFront($request->input());
-        //lo que llega en la varieble name lo convertimos a minusculas
-        $user->name = strtolower($request->name);
-        $user->lastname = strtolower($request->lastname);
-        //dejamos la primera letra en mayusculas de las plabras
-        $user->name = ucwords($request->name);
-        $user->lastname = ucwords($request->lastname);
-        //hasheamos la contraseña
-        $user->password = Hash::make($request->password);
-        $user->save();
+        try{
+            $user = new UserFront($request->input());
+            //lo que llega en la varieble name lo convertimos a minusculas
+            $user->name = strtolower($request->name);
+            $user->lastname = strtolower($request->lastname);
+            //dejamos la primera letra en mayusculas de las plabras
+            $user->name = ucwords($request->name);
+            $user->lastname = ucwords($request->lastname);
+            //hasheamos la contraseña
+            $user->password = Hash::make($request->password);
+            $user->save();
 
-        //$token = $user->createToken('noti_token')->plainTextToken;
+            $token = $user->createToken('noti_token')->plainTextToken;
 
-       //si el save fue exitoso
-        if($user){
-            return ApiResponse::successAuth('Usuario creado correctamente', Response::HTTP_CREATED);
-        }else{
-            return ApiResponse::error('Error al crear el usuario', Response::HTTP_BAD_REQUEST);
+           //si el save fue exitoso
+            if($user){
+                return ApiResponse::successAuth('Usuario creado correctamente', Response::HTTP_CREATED, $token, $user);
+            }else{
+                return ApiResponse::error('Error al crear el usuario', Response::HTTP_BAD_REQUEST);
+            }
+            //enviamos correo de verificacion
+            //$user->sendEmailVerificationNotification();
+
+           // event(new Registered($user));
+
+
+        }catch(\Exception $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error('Error de la base de datos', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+
     }
 
     /**
@@ -111,6 +125,56 @@ class UsersController extends Controller
             return ApiResponse::success('Usuario '.$name.' fue eliminado correctamente', Response::HTTP_OK);
         }catch(ModelNotFoundException $e){
             return ApiResponse::error('El usuario que desea eliminar no existe', Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    //funcion verificar email
+    public function verify($id, $hash){
+        try{
+
+            //buscamos el usuario
+            $user = UserFront::findOrFail($id);
+            //verificamos si el email ya ha sido verificado
+            if($user->hasVerifiedEmail()){
+                return ApiResponse::error('El email ya ha sido verificado', Response::HTTP_BAD_REQUEST);
+            }
+            //obtenemos el token de la tabla personal_access_tokens de la base de datos
+
+            //verificamos el email
+            if($user->markEmailAsVerified()){
+                return ApiResponse::success('Email verificado correctamente', Response::HTTP_OK);
+            }else{
+                return ApiResponse::error('Error al verificar el email', Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error('El usuario que desea verificar no existe', Response::HTTP_NOT_FOUND);
+        }
+    }
+
+    //funcion para resetear password
+    public function resetPassword(Request $request){
+        try{
+            $rules = [
+                'email' => 'required|email|exists:users,email',
+                'password' => 'required|min:8|max:100',
+            ];
+            //validamos los datos
+            $validator = Validator::make($request->all(), $rules);
+            //si falla la validacion
+            if($validator->fails()){
+                return ApiResponse::error('Error en la validación', Response::HTTP_BAD_REQUEST, $validator->errors()->all());
+            }
+            //buscamos el usuario
+            $user = UserFront::where('email', $request->email)->first();
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            return ApiResponse::success('Contraseña actualizada correctamente', Response::HTTP_OK);
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error('El email que ingreso no existe', Response::HTTP_NOT_FOUND);
+        }catch(\Exception $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
