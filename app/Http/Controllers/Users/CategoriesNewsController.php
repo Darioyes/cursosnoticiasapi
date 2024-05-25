@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Users;
 use App\Models\Users\Categories_news as CategoriesNewsFront;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Responses\ApiResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 
 class CategoriesNewsController extends Controller
@@ -15,7 +17,15 @@ class CategoriesNewsController extends Controller
      */
     public function index()
     {
-        //
+        //obtener las categorias de las noticias
+        try{
+            $categoriesNews = CategoriesNewsFront::orderBy('name', 'asc')
+            ->get();
+            //retornamos la respuesta
+            return ApiResponse::success('Listado de categorias de noticias', Response::HTTP_OK, $categoriesNews);
+        }catch(\Exception $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

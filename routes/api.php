@@ -14,6 +14,8 @@ use App\Http\Controllers\Users\NewsController as NewsFrontController;
 use App\Http\Controllers\Users\UsersController as UsersFrontController;
 use App\Http\Controllers\Users\CommentsController as CommentsFrontController;
 use App\Http\Controllers\Users\ContactController as ContactFrontController;
+use App\Http\Controllers\Users\CategoriesCoursesController as CategoriesCoursesFrontController;
+use App\Http\Controllers\Users\CategoriesNewsController as CategoriesNewsFrontController;
 
 
 /*
@@ -75,6 +77,12 @@ Route::post('noticias/login', [UsersFrontController::class, 'login']);
 Route::post('noticias/registro', [UsersFrontController::class, 'store']);
 //ruta de verificación de email
 Route::get('noticias/verificar/{id}/{hash}', [UsersFrontController::class, 'verify'])->name('verification.verify');
+
+//ruta categorias cursos
+Route::get('categorias-cursos', [CategoriesCoursesFrontController::class, 'index']);
+
+//ruta de categorias de noticias
+Route::get('categorias-noticias', [CategoriesNewsFrontController::class, 'index']);
 
 //ruta para resetear password
 //Route::post('noticias/reset-password', [UsersFrontController::class, 'resetPassword']);
