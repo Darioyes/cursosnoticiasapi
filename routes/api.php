@@ -62,6 +62,10 @@ Route::middleware('auth:sanctum')->group(function(){
 //!rutas frontend
 //el metodo only nos permite definir que rutas queremos que se creen
 Route::resource('noticias', NewsFrontController::class)->only(['index', 'show']);
+//ruta de noticias por categoria
+Route::get('noticias/categoria/{id}', [NewsFrontController::class, 'getNewsByCategory']);
+//ruta de noticias por curso
+Route::get('noticias/curso/{id}', [NewsFrontController::class, 'getNewsByCourse']);
 
 
 //ruta comentarios
