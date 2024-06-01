@@ -101,6 +101,46 @@ class NewsController extends Controller
         }
     }
 
+    //obtener noticias por el campo featured sea igual a 1 y el campo visible sea igual a 1
+    public function getFeaturedNews()
+    {
+        try{
+            //traemos las noticias c
+            $news = newsFront::with(['articles','category_news', 'category_course', 'comments'])
+            ->where('featured', 1)
+            ->where('visible', 1)
+            ->where('content', 'news')
+            ->orderBy('id', 'desc')
+            ->get();
+            //retornamos la respuesta
+            return ApiResponse::success('Listado de noticias destacadas', Response::HTTP_OK, $news);
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error('La categoría que busca no existe', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }catch(\Exception $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    //traer cursos pore por el campo featured sea igual a 1 y el campo visible sea igual a 1
+    public function getFeaturedCourses()
+    {
+        try{
+            //traemos las el curso
+            $news = newsFront::with(['articles','category_news', 'category_course', 'comments'])
+            ->where('featured', 1)
+            ->where('visible', 1)
+            ->where('content', 'course')
+            ->orderBy('id', 'desc')
+            ->get();
+            //retornamos la respuesta
+            return ApiResponse::success('Listado de noticias destacadas', Response::HTTP_OK, $news);
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error('La categoría que busca no existe', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }catch(\Exception $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     //obtener noticias por id de curso
     public function getNewsByCourse($id)
     {

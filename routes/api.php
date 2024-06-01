@@ -66,6 +66,10 @@ Route::resource('noticias', NewsFrontController::class)->only(['index', 'show'])
 Route::get('noticias/categoria/{id}', [NewsFrontController::class, 'getNewsByCategory']);
 //ruta de noticias por curso
 Route::get('noticias/curso/{id}', [NewsFrontController::class, 'getNewsByCourse']);
+//ruta de noticias por el featured
+Route::get('noticias-destacadas', [NewsFrontController::class, 'getFeaturedNews']);
+//ruta de cursos destacados
+Route::get('cursos-destacados', [NewsFrontController::class, 'getFeaturedCourses']);
 
 
 //ruta comentarios
