@@ -46,18 +46,16 @@ class NewsController extends Controller
     public function show($id)
     {
         try{
+            //traemos la noticia por id
             //si es noticia o curso hacemos la relación con eloquent
             //!estamos creando un objeto de la clase News y llamando a la función with
             //!dentro de la función with le pasamos un array con las relaciones que queremos hacer
             //!en este caso category_news y category_course que son las funciones que tenemos en el modelo News
-            $news = newsFront::with(['articlesFront','categoryNewsFront', 'categoryCourseFront','commentsFront'])
-                        ->findOrFail($id)
-                        ->makeHidden(['category_news_id', 'category_course_id']);
+            $news = newsFront::with(['articles','category_news', 'category_course', 'comments'])
+            ->where('id', $id)
+            ->first();
             //retornamos la respuesta
-            return ApiResponse::success('Detalle de noticia', Response::HTTP_OK, $news);
-            //buscamos la noticia por id
-            // $news = News::findOrFail($id);
-            // //retornamos la respuesta
+            return ApiResponse::success('Noticia encontrada', Response::HTTP_OK, $news);
             }catch(ModelNotFoundException $e){
         }catch(ModelNotFoundException $e){
             //si no existe el id de la noticia retornamos un mensaje de error
