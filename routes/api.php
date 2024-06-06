@@ -16,6 +16,10 @@ use App\Http\Controllers\Users\CommentsController as CommentsFrontController;
 use App\Http\Controllers\Users\ContactController as ContactFrontController;
 use App\Http\Controllers\Users\CategoriesCoursesController as CategoriesCoursesFrontController;
 use App\Http\Controllers\Users\CategoriesNewsController as CategoriesNewsFrontController;
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Support\Facades\Redirect;
+
 
 
 /*
@@ -78,28 +82,84 @@ Route::resource('noticias/comentarios', CommentsFrontController::class)->only(['
 //ruta contacto
 Route::resource('noticias/contactame', ContactFrontController::class)->only(['store']);
 
+//ruta categorias cursos
+Route::get('categorias-cursos', [CategoriesCoursesFrontController::class, 'index']);
+
 //ruta de login
-Route::post('noticias/login', [UsersFrontController::class, 'login']);
+Route::post('entry/login', [UsersFrontController::class, 'login'])->name('login');
+
+//Route::post('veryfy/login', [UsersFrontController::class, 'verifyEmail'])->name('login');
 
 //ruta de registro
 Route::post('noticias/registro', [UsersFrontController::class, 'store']);
 //ruta de verificación de email
-Route::get('noticias/verificar/{id}/{hash}', [UsersFrontController::class, 'verify'])->name('verification.verify');
-
-//ruta categorias cursos
-Route::get('categorias-cursos', [CategoriesCoursesFrontController::class, 'index']);
 
 //ruta de categorias de noticias
 Route::get('categorias-noticias', [CategoriesNewsFrontController::class, 'index']);
+//Route::get('noticias/verificar/{id}/{hash}', [UsersFrontController::class, 'verify'])->name('verification.verify');
+
+
 
 //ruta para resetear password
 //Route::post('noticias/reset-password', [UsersFrontController::class, 'resetPassword']);
 
+//todo Enviar un email de verificación
+Route::post('email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return response()->json(['message' => 'Verification link sent!']);
+})->middleware(['auth:api', 'throttle:6,1'])->name('verification.send');
+
+//todo Verificar el email
+// Route::get('email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill();
+
+//     Redirect::away('http://localhost:4200');
+//     //return response()->json(['message' => 'Email verified!']);
+// })->middleware(['auth:api', 'signed'])->name('verification.verify');
+Route::match(['get', 'post'], 'email/verify/{id}/{hash}', [UsersFrontController::class, 'verifyEmail'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
+// todo Verificar el estado de verificación del email
+Route::match(['get', 'post'], 'email/verify', function (Request $request) {
+    //return response()->json(['verificado' => $request->user()->hasVerifiedEmail()]);
+     // Verificar la autenticidad de la solicitud y redirigir al frontend si el correo electrónico está verificado
+     if ($request->user()->hasVerifiedEmail()) {
+        return Redirect::away('http://localhost:4200');
+    }
+
+    // Si el correo electrónico no está verificado, devolver una respuesta JSON
+    return response()->json(['verificado' => false]);
+})->middleware('auth:api')->name('verification.notice');
+
+// Route::post('email/verify', function (Request $request) {
+//     return response()->json(['verified' => $request->user()->hasVerifiedEmail()]);
+// })->middleware('auth:api')->name('verification.verify');
+
+// Mostrar el mensaje de verificación
+// Route::get('/email/verify', function () {
+
+//     //redireccionamos al http://localhost:4200/ para que el frontend se encargue de mostrar el mensaje de verificación
+//     return redirect('http://localhost:4200/');
+
+// })->middleware(['auth'])->name('verification.notice');
+// Route::get('email/verify', function (Request $request) {
+//     // Verificar la autenticidad de la solicitud y redirigir al frontend si el correo electrónico está verificado
+//     if ($request->user()->hasVerifiedEmail()) {
+//         return Redirect::away('http://localhost:4200');
+//     }
+
+//     // Si el correo electrónico no está verificado, devolver una respuesta JSON
+//     return response()->json(['verificado' => false]);
+// })->middleware('auth:api')->name('verification.notice');
 
 //grupo de rutas de autenticación
 Route::middleware(['auth:sanctum','verified'])->group(function(){
+
+
     //ruta de logout
-    Route::post('noticias/logout', [UsersFrontController::class, 'logout']);
+    Route::post('logout', [UsersFrontController::class, 'logout']);
 
     //ruta usuarios
     Route::resource('noticias/usuario', UsersFrontController::class)->only(['show', 'update']);

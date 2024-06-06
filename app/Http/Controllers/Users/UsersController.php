@@ -15,7 +15,7 @@ use App\Http\Requests\Auth\Login;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Redirect;
 
 
 class UsersController extends Controller
@@ -128,29 +128,29 @@ class UsersController extends Controller
         }
     }
 
-    //funcion verificar email
-    public function verify($id, $hash){
-        try{
+    // //funcion verificar email
+    // public function verify($id, $hash){
+    //     try{
 
-            //buscamos el usuario
-            $user = UserFront::findOrFail($id);
-            //verificamos si el email ya ha sido verificado
-            if($user->hasVerifiedEmail()){
-                return ApiResponse::error('El email ya ha sido verificado', Response::HTTP_BAD_REQUEST);
-            }
-            //obtenemos el token de la tabla personal_access_tokens de la base de datos
+    //         //buscamos el usuario
+    //         $user = UserFront::findOrFail($id);
+    //         //verificamos si el email ya ha sido verificado
+    //         if($user->hasVerifiedEmail()){
+    //             return ApiResponse::error('El email ya ha sido verificado', Response::HTTP_BAD_REQUEST);
+    //         }
+    //         //obtenemos el token de la tabla personal_access_tokens de la base de datos
 
-            //verificamos el email
-            if($user->markEmailAsVerified()){
-                return ApiResponse::success('Email verificado correctamente', Response::HTTP_OK);
-            }else{
-                return ApiResponse::error('Error al verificar el email', Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
+    //         //verificamos el email
+    //         if($user->markEmailAsVerified()){
+    //             return ApiResponse::success('Email verificado correctamente', Response::HTTP_OK);
+    //         }else{
+    //             return ApiResponse::error('Error al verificar el email', Response::HTTP_INTERNAL_SERVER_ERROR);
+    //         }
 
-        }catch(ModelNotFoundException $e){
-            return ApiResponse::error('El usuario que desea verificar no existe', Response::HTTP_NOT_FOUND);
-        }
-    }
+    //     }catch(ModelNotFoundException $e){
+    //         return ApiResponse::error('El usuario que desea verificar no existe', Response::HTTP_NOT_FOUND);
+    //     }
+    // }
 
     //funcion para resetear password
     public function resetPassword(Request $request){
@@ -196,5 +196,37 @@ class UsersController extends Controller
         auth()->user()->tokens()->delete();
 
         return ApiResponse::success('Sesión cerrada correctamente', Response::HTTP_OK);
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        try{
+               // Verificar la autenticidad de la solicitud y redirigir al local host 4200
+        if (!$request->hasValidSignature()) {
+            return ApiResponse::error('Enlace de verificación no válido', Response::HTTP_BAD_REQUEST);
+        }
+
+        // Buscar y verificar el usuario
+        $user = UserFront::findOrFail($request->id);
+        if (!$user) {
+            return ApiResponse::error('Enlace de verificación no válido', Response::HTTP_BAD_REQUEST);
+        }
+
+        // Marcar el correo electrónico del usuario como verificado
+        //$user->markEmailAsVerified();
+        if (!$user->hasVerifiedEmail()) {
+            $user->markEmailAsVerified();
+        }
+
+        // Redirigir al frontend
+        return Redirect::away('http://localhost:4200');
+        return ApiResponse::success('Correo electrónico verificado correctamente', Response::HTTP_OK);
+
+        }catch(\Exception $e){
+            return ApiResponse::error($e->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
+        }catch(ModelNotFoundException $e){
+            return ApiResponse::error('Error de la base de datos', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
     }
 }
