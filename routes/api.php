@@ -90,9 +90,6 @@ Route::post('entry/login', [UsersFrontController::class, 'login'])->name('login'
 
 //Route::post('veryfy/login', [UsersFrontController::class, 'verifyEmail'])->name('login');
 
-//ruta de registro
-Route::post('noticias/registro', [UsersFrontController::class, 'store']);
-//ruta de verificación de email
 
 //ruta de categorias de noticias
 Route::get('categorias-noticias', [CategoriesNewsFrontController::class, 'index']);
@@ -133,28 +130,10 @@ Route::match(['get', 'post'], 'email/verify', function (Request $request) {
     return response()->json(['verificado' => false]);
 })->middleware('auth:api')->name('verification.notice');
 
-// Route::post('email/verify', function (Request $request) {
-//     return response()->json(['verified' => $request->user()->hasVerifiedEmail()]);
-// })->middleware('auth:api')->name('verification.verify');
+//ruta de registro
+Route::post('noticias/registro-usuario', [UsersFrontController::class, 'store']);
 
-// Mostrar el mensaje de verificación
-// Route::get('/email/verify', function () {
 
-//     //redireccionamos al http://localhost:4200/ para que el frontend se encargue de mostrar el mensaje de verificación
-//     return redirect('http://localhost:4200/');
-
-// })->middleware(['auth'])->name('verification.notice');
-// Route::get('email/verify', function (Request $request) {
-//     // Verificar la autenticidad de la solicitud y redirigir al frontend si el correo electrónico está verificado
-//     if ($request->user()->hasVerifiedEmail()) {
-//         return Redirect::away('http://localhost:4200');
-//     }
-
-//     // Si el correo electrónico no está verificado, devolver una respuesta JSON
-//     return response()->json(['verificado' => false]);
-// })->middleware('auth:api')->name('verification.notice');
-
-//grupo de rutas de autenticación
 Route::middleware(['auth:sanctum','verified'])->group(function(){
 
 

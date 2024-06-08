@@ -44,19 +44,15 @@ class UsersController extends Controller
             //hasheamos la contraseña
             $user->password = Hash::make($request->password);
             $user->save();
-
+            //creamos el token
             $token = $user->createToken('noti_token')->plainTextToken;
 
            //si el save fue exitoso
             if($user){
-                return ApiResponse::successAuth('Usuario creado correctamente', Response::HTTP_CREATED, $token, $user);
+                return ApiResponse::successAuth('Usuario registrado correctamente', Response::HTTP_CREATED, $token, $user);
             }else{
-                return ApiResponse::error('Error al crear el usuario', Response::HTTP_BAD_REQUEST);
+                return ApiResponse::error('Error al registrar el usuario', Response::HTTP_BAD_REQUEST);
             }
-            //enviamos correo de verificacion
-            //$user->sendEmailVerificationNotification();
-
-           // event(new Registered($user));
 
 
         }catch(\Exception $e){
