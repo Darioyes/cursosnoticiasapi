@@ -19,6 +19,10 @@ use App\Http\Controllers\Users\CategoriesNewsController as CategoriesNewsFrontCo
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Redirect;
+use App\Http\Controllers\Users\ForgotPasswordController;
+use App\Http\Controllers\Users\ResetPasswordController;
+
+
 
 
 
@@ -100,25 +104,14 @@ Route::get('categorias-noticias', [CategoriesNewsFrontController::class, 'index'
 //ruta para resetear password
 //Route::post('noticias/reset-password', [UsersFrontController::class, 'resetPassword']);
 
-//todo Enviar un email de verificación
+//todo 1 Enviar un email de verificación
 Route::post('email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
 
     return response()->json(['message' => 'Verification link sent!']);
 })->middleware(['auth:api', 'throttle:6,1'])->name('verification.send');
 
-//todo Verificar el email
-// Route::get('email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-//     $request->fulfill();
-
-//     Redirect::away('http://localhost:4200');
-//     //return response()->json(['message' => 'Email verified!']);
-// })->middleware(['auth:api', 'signed'])->name('verification.verify');
-Route::match(['get', 'post'], 'email/verify/{id}/{hash}', [UsersFrontController::class, 'verifyEmail'])
-    ->middleware(['signed'])
-    ->name('verification.verify');
-
-// todo Verificar el estado de verificación del email
+//  todo 2 Verificar el estado de verificación del email
 Route::match(['get', 'post'], 'email/verify', function (Request $request) {
     //return response()->json(['verificado' => $request->user()->hasVerifiedEmail()]);
      // Verificar la autenticidad de la solicitud y redirigir al frontend si el correo electrónico está verificado
@@ -130,8 +123,24 @@ Route::match(['get', 'post'], 'email/verify', function (Request $request) {
     return response()->json(['verificado' => false]);
 })->middleware('auth:api')->name('verification.notice');
 
+//todo 3 Verificar el email esta se va a la funcion verifyEmail
+
+Route::match(['get', 'post'], 'email/verify/{id}/{hash}', [UsersFrontController::class, 'verifyEmail'])
+    ->middleware(['signed'])
+    ->name('verification.verify');
+
 //ruta de registro
 Route::post('noticias/registro-usuario', [UsersFrontController::class, 'store']);
+
+// todo Ruta para solicitar el restablecimiento de contraseña
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+// todo Ruta para manejar el restablecimiento de contraseña
+Route::post('password/reset', [ResetPasswordController::class, 'reset']);
+
+Route::get('password/reset/{token}', function ($token) {
+    return response()->json(['token' => $token]);
+})->name('password.reset');
+
 
 
 Route::middleware(['auth:sanctum','verified'])->group(function(){

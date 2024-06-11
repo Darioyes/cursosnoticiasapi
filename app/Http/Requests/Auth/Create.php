@@ -29,8 +29,6 @@ class Create extends FormRequest
             'lastname' => 'required|min:3|max:100',
             'email' => 'required|email|unique:users',
             'password' => ['confirmed',$passwordRule,$numbers],//password_confirmation
-            //'send_mail' => 'required|in:true,false',
-            //terminos y condiciones siempre devolvera true
             'terms' => 'required|accepted',
         ];
     }
