@@ -25,7 +25,7 @@ class Store extends FormRequest
             'name' => 'required|string|min:3|max:50',
             'email' => 'required|email|min:3|max:50',
             'message' => 'required|string|min:3|max:500',
-            'file'=> 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,txt|max:2048'
+            'file'=> 'nullable|file|mimes:pdf|max:2048'
         ];
     }
 }

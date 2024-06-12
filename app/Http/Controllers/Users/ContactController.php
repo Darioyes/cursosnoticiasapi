@@ -31,8 +31,8 @@ class ContactController extends Controller
             //creamos el comentario de contacto
             $contact = new ContactFront($request->input());
             //si se adjunto un documento lo guardamos en una carpeta privada
-            if($request->file){
-                $path = $request->file->store('private/contact');
+            if($request->hasfile('file')){
+                $path = $request->file('file')->store('private/contact');
                 $contact->file = $path;
             }
             //guardamos el comentario de contacto

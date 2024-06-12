@@ -79,12 +79,8 @@ Route::get('noticias-destacadas', [NewsFrontController::class, 'getFeaturedNews'
 //ruta de cursos destacados
 Route::get('cursos-destacados', [NewsFrontController::class, 'getFeaturedCourses']);
 
-
-//ruta comentarios
-Route::resource('noticias/comentarios', CommentsFrontController::class)->only(['store']);
-
 //ruta contacto
-Route::resource('noticias/contactame', ContactFrontController::class)->only(['store']);
+Route::resource('contactame', ContactFrontController::class)->only(['store']);
 
 //ruta categorias cursos
 Route::get('categorias-cursos', [CategoriesCoursesFrontController::class, 'index']);
@@ -92,17 +88,9 @@ Route::get('categorias-cursos', [CategoriesCoursesFrontController::class, 'index
 //ruta de login
 Route::post('entry/login', [UsersFrontController::class, 'login'])->name('login');
 
-//Route::post('veryfy/login', [UsersFrontController::class, 'verifyEmail'])->name('login');
-
-
 //ruta de categorias de noticias
 Route::get('categorias-noticias', [CategoriesNewsFrontController::class, 'index']);
 //Route::get('noticias/verificar/{id}/{hash}', [UsersFrontController::class, 'verify'])->name('verification.verify');
-
-
-
-//ruta para resetear password
-//Route::post('noticias/reset-password', [UsersFrontController::class, 'resetPassword']);
 
 //todo 1 Enviar un email de verificación
 Route::post('email/verification-notification', function (Request $request) {
@@ -141,15 +129,14 @@ Route::get('password/reset/{token}', function ($token) {
     return response()->json(['token' => $token]);
 })->name('password.reset');
 
-
-
 Route::middleware(['auth:sanctum','verified'])->group(function(){
-
-
     //ruta de logout
     Route::post('logout', [UsersFrontController::class, 'logout']);
 
     //ruta usuarios
     Route::resource('noticias/usuario', UsersFrontController::class)->only(['show', 'update']);
+
+    //ruta de comentarios
+    Route::resource('comentarios', CommentsFrontController::class)->only(['store']);
 });
 

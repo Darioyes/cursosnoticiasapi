@@ -38,10 +38,14 @@ class ArticlesController extends Controller
         try{
             //creamos el articulo
             $articles = new Articles($request->input());
+            //si se adjunto una imagen la guardamos en una carpeta privada
+            if( $request->hasFile('image')){
             //subimos la imagen y guardamos la ruta en la variable $path
-            $path = $request->image->store('public/images/articles'); //sube los archivos en store/app/public/images/articles
+            $path = $request->file('image')->store('public/images/articles'); //sube los archivos en store/app/public/images/articles
             //guardamos la ruta en la base de datos
             $articles->image = $path;
+
+            }
             //guardamos el articulo
             $articles->save();
             //retornamos mensaje de exito
@@ -59,7 +63,7 @@ class ArticlesController extends Controller
     public function show($id)
     {
         try{
-            //relacionamos las tablas para traer el news_id 
+            //relacionamos las tablas para traer el news_id
             $articles = Articles::findOrFail($id);
             //retornamos la respuesta
             return ApiResponse::success('Articulo encontrado', Response::HTTP_OK, $articles);
@@ -81,14 +85,19 @@ class ArticlesController extends Controller
             //si existe la imagen
             if( $request->hasFile('image') && $request->file('image')->isValid()){
                 //subimos la imagen y guardamos la ruta en la variable $path
-                $path = $request->image->store('public/images/articles'); //sube los archivos en store/app/public/images/articles
-                //eliminamos la imagen anterior
+                $path = $request->file('image')->store('public/images/articles');//sube los archivos en store/app/public/images/articles
+            // Eliminamos la imagen anterior si existe
+            if ($articles->image) {
                 Storage::delete($articles->image);
+            }
                 //guardamos la ruta en la base de datos
                 $articles->image = $path;
             }
             //actualizamos el articulo
-            $articles->update($request->input());
+            //$articles->update($request->input());
+             // Actualizamos el artículo con los demás datos
+            $articles->fill($request->except('image'));
+            $articles->save();
             //retornamos mensaje de exito
             return ApiResponse::success('Articulo actualizado correctamente', Response::HTTP_OK);
         }catch(ModelNotFoundException $e){
