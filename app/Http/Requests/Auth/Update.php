@@ -27,7 +27,6 @@ class Update extends FormRequest
         return [
             'name' => 'required|min:3|max:100',
             'lastname' => 'required|min:3|max:100',
-            'email' => 'required|email|unique:users',
         ];
     }
 }

@@ -16,6 +16,7 @@ use App\Http\Responses\ApiResponse;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\Auth\Update;
 
 
 class UsersController extends Controller
@@ -79,23 +80,18 @@ class UsersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Update $request, $id)
     {
         try{
-            $rules = [
-                'name' => 'required|min:3|max:100',
-                'lastname' => 'required|min:3|max:100',
-                'email' => 'required|email|unique:users,email,'.$id,
-            ];
-
-            $validator = Validator::make($request->all(), $rules);
-            if($validator->fails()){
-                return ApiResponse::error('Error en la validación', Response::HTTP_BAD_REQUEST, $validator->errors()->all());
-            }
-
             $user = UserFront::findOrFail($id);
             $user->fill($request->input());
             $user->save();
+
+            if($user){
+                return ApiResponse::success('Usuario actualizado correctamente', Response::HTTP_OK, $user);
+            }else{
+                return ApiResponse::error('Error al actualizar el usuario', Response::HTTP_BAD_REQUEST);
+            }
 
             //$user->update($request->input());
 

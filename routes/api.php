@@ -42,7 +42,7 @@ use App\Http\Controllers\Users\ResetPasswordController;
 //ruta de login
 Route::post('users/login', [UsersController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function(){
+Route::middleware('auth:sanctum','verified')->group(function(){
     //ruta de tipo recurso para users
     Route::resource('users',UsersController::class )->except(['create','edit']);
     //ruta de logout de users
@@ -117,7 +117,7 @@ Route::match(['get', 'post'], 'email/verify/{id}/{hash}', [UsersFrontController:
     ->middleware(['signed'])
     ->name('verification.verify');
 
-//ruta de registro
+//ruta de registro de usuario
 Route::post('noticias/registro-usuario', [UsersFrontController::class, 'store']);
 
 // todo Ruta para solicitar el restablecimiento de contraseña
@@ -134,7 +134,7 @@ Route::middleware(['auth:sanctum','verified'])->group(function(){
     Route::post('logout', [UsersFrontController::class, 'logout']);
 
     //ruta usuarios
-    Route::resource('noticias/usuario', UsersFrontController::class)->only(['show', 'update']);
+    Route::resource('usuario', UsersFrontController::class)->only(['show', 'update']);
 
     //ruta de comentarios
     Route::resource('comentarios', CommentsFrontController::class)->only(['store']);
