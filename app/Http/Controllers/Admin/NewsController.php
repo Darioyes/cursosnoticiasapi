@@ -112,11 +112,13 @@ class NewsController extends Controller
             //buscamos la noticia por id
             $news = News::findOrFail($id);
             //si el usuario sube una imagen
-            if($request->hasFile('image')){
+            if($request->hasFile('image') && $request->file('image')->isValid()){
                 //guardamos la ruta de la imagen en la variable $path
-                $path = $request->image->store('public/images/news');
+                $path = $request->file('image')->store('public/images/news');
                 //eliminamos la imagen anterior
-                Storage::delete($news->image);
+                if($news->image){
+                    Storage::delete($news->image);
+                }
                 //guardamos la ruta de la nueva imagen
                 $news->image = $path;
             }
@@ -127,7 +129,8 @@ class NewsController extends Controller
             //guardamos el slug en la base de datos
             $news->slug = $slug;
             //actualizamos los datos
-            $news->update($request->input());
+            $news->fill($request->except('image'));
+            $news->save();
             //retornamos mensaje de exito
             return ApiResponse::success('Noticia actualizada correctamente', Response::HTTP_OK, $news);
         }
