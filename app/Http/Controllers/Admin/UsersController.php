@@ -47,8 +47,8 @@ class UsersController extends Controller
         $user->name = strtolower($request->name);
         $user->lastname = strtolower($request->lastname);
         //dejamos la primera letra en mayusculas de las plabras
-        $user->name = ucwords($request->name);
-        $user->lastname = ucwords($request->lastname);
+        $user->name = ucfirst($request->name);
+        $user->lastname = ucfirst($request->lastname);
         //hasheamos la contraseña
         $user->password = Hash::make($request->password);
         $user->save();
