@@ -211,7 +211,7 @@ class UsersController extends Controller
         }
 
         // Redirigir al frontend
-        return Redirect::away('http://localhost:4200');
+        return Redirect::away('https://noticursos.com/');
         return ApiResponse::success('Correo electrónico verificado correctamente', Response::HTTP_OK);
 
         }catch(\Exception $e){
