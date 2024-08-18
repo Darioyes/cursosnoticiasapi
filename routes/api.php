@@ -104,7 +104,7 @@ Route::match(['get', 'post'], 'email/verify', function (Request $request) {
     //return response()->json(['verificado' => $request->user()->hasVerifiedEmail()]);
      // Verificar la autenticidad de la solicitud y redirigir al frontend si el correo electrónico está verificado
      if ($request->user()->hasVerifiedEmail()) {
-        return Redirect::away('http://localhost:4200');
+        return Redirect::away('https://noticursos.com/');
     }
 
     // Si el correo electrónico no está verificado, devolver una respuesta JSON
