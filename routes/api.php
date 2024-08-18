@@ -120,7 +120,7 @@ Route::match(['get', 'post'], 'email/verify/{id}/{hash}', [UsersFrontController:
 //ruta de registro de usuario
 Route::post('noticias/registro-usuario', [UsersFrontController::class, 'store']);
 
-// todo Ruta para solicitar el restablecimiento de contraseña
+// todo Ruta para solicitar restablecimiento de contraseña
 Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 // todo Ruta para manejar el restablecimiento de contraseña
 Route::post('password/reset', [ResetPasswordController::class, 'reset']);
