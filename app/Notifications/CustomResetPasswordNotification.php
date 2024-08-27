@@ -37,7 +37,7 @@ class CustomResetPasswordNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $url = url('https://noticursos.com/recuperar-contrasena/' . $this->token);
+        $url = url('https://noticursos.com/#/recuperar-contrasena/' . $this->token);
         return (new MailMessage)
                     ->line('Ha recibido este mensaje porque se solicitó un restablecimiento de contraseña para su cuenta.')
                     ->action('Restablecer contraseña', $url)
